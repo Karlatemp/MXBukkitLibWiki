@@ -1,0 +1,64 @@
+.darkglass{
+    background-color: #00000077;
+}
+.container{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+}
+.debug .container>.pages,
+.debug .container>.root{
+    background-color: rgba(0, 255, 255, 0.287);
+}
+.container>.pages{
+    width: 230px;
+}
+.container>.nv{
+    display: block;
+    margin: 10px;
+    width: 5px;
+    height: 100%;
+    background-color: rgb(53, 53, 53);
+}
+.showx>.body{
+    display: flex;
+    flex-direction: column;
+}
+.container>.root{
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+.button{
+    height: 30px;
+    font-size: 20px;
+    line-height: 30px;
+    display: block;
+}
+.button.ico::before {
+    display: inline-block;
+    content: '>';
+    color: #66ccff;
+    padding: 0 5px 0 5px;
+    transform: rotate(0deg);
+    transition: transform 0.1s;
+}
+.button.ico.pagedown:hover::before,
+.button.ico.pagedown.active::before{
+    transform: rotate(90deg);
+}
+.button.ico::after{
+    display: inline-block;
+    content: '<';
+    color: #66ccff;
+    position: relative;
+    transition: left 0.5s, opacity 0.5s;
+    left: 100px;
+    opacity: 0;
+}
+.button.ico:hover::after,
+.button.ico.active::after{
+    left: 20px;
+    opacity: 1;
+}
