@@ -121,7 +121,45 @@ public void onTabComplete(CommandSender cs, Command cmnd, String string, String[
                     type: "code", mode: "java", height: "70px", code: '\
 public class C implements CommandTabCompleter{\n\
     .....\n\
-}'})).append(new a.Show().name("注意").value("Tab和执行一样, args 去掉了第一个参数, 而且你无需手动过滤返回列表, 我们已经进行过滤了."))))
+}'})).append(new a.Show().name("注意").value("Tab和执行一样, args 去掉了第一个参数, 而且你无需手动过滤返回列表, 我们已经进行过滤了.")))
+            .append(new a.Show().name("高级命令").value([
+                a.text(document.createElement("h2"), "Raw命令"), "我这里的Raw定义为直接执行命令, 像是直接执行 /example",
+                {
+                    type: "code", mode: "java", height: "70px", code: '\
+import cn.mcres.gyhhy.MXLib.bukkit.cmd.*;\n\
+@SubCommand(name=Variable.COMMAND_CMD_DEF)\npublic void RawCommand{}'},
+                '"找不到命令" 命令, 此功能可用于自定义help', {
+                    type: "code", mode: "java", height: "70px", code: '\
+import cn.mcres.gyhhy.MXLib.bukkit.cmd.*;\n\
+@SubCommand(name=Variable.COMMAND_NOSUB, noRemoveFirstArg = true)\npublic void CommandNotFoundException{}'}
+            ])).append(new a.Show().name("动态注入").value([
+                "这里我们要动态注入子命令, 这里推荐不要与其他命令放在同一个包下", {
+                    type: 'code', mode: 'java', height: '300px', code: '\
+package cn.example.exts;\n\
+import cn.mcres.gyhhy.MXLib.bukkit.cmd.*;\n\
+import org.bukkit.entity.Player;\n\
+@SubCommand\n\
+@ClassIgnore\n\
+public class DXLCommand extends SubCommandExecutor{\n\
+    public DXMCommand(){\n\
+        setup(null, null, getClass().getDeclaredAnnotation(SubCommand.class));\n\
+    }\n\n\
+    @Override\n\
+    protected boolean check(CommandSender sender, Executer exev){\n\
+        if(!(sender instanceof Player)) return false;\n\
+        return super.check0(sender, exev);\n\
+    }\n\n\
+    @Override\n\
+    public boolean exec0(CommandSender sender, Command cmd, String ali, String[] argc, Executer exev){\n\
+        Player player = (Player)sender;\n\
+        // 这里也会去掉参数, 取决于setup选取了哪个@SubCommand\n\
+        player.sendMessage("Hello Inject Command! " + String.join(" ", argc));\n\
+    }\n\
+}'}, "好,我们已经写好我们的命令了,让我们为新命令的诞生献上祝福", {
+                    type: 'code', mode: 'java', height: '50px', code: '\
+ExecuterEX exec = ....;\n\
+exec.reg("dxl", new DXLCommand());'}
+            ])))
         .append(new a.PageDown().name("GameProfile").append(
             new a.Show().name("获取GameProfile").value([
                 {
@@ -179,10 +217,11 @@ WebHelper.post("https://www.example.com")\n\
                 return a;
             }
         ])).append(new a.Show().name("获取和使用").value([
-            "我们需要调用",{type: 'code', mode: 'java', height: '30px', code:"cn.mcres.gyhhy.MXLib.yggdrasil.Yggdrasil.getServerYggdrasil();"},
-            "获取Yggdrasil实例,当然你也可以直接 new 一个实例",document.createElement("br"),
+            "我们需要调用", { type: 'code', mode: 'java', height: '30px', code: "cn.mcres.gyhhy.MXLib.yggdrasil.Yggdrasil.getServerYggdrasil();" },
+            "获取Yggdrasil实例,当然你也可以直接 new 一个实例", document.createElement("br"),
             "获取Yggdrasil实例后, 我们可以使用这些方法快速查询玩家信息, 查询玩家皮肤信息等, 下面是获取玩家皮肤的代码实例",
-            {type: 'code', mode: 'java', height: '180px', code:'\
+            {
+                type: 'code', mode: 'java', height: '180px', code: '\
 import cn.mcres.gyhhy.MXLib.yggdrasil.Yggdrasil;\n\
 import cn.mcres.gyhhy.MXLib.yggdrasil.beans.*;\n\n\
 Yggdrasil ygg = Yggdrasil.getServerYggdrasil();\n\
@@ -197,7 +236,8 @@ for(Profile p : r){\n\
         ]))).append(new a.Show().name("ThrowHelper").value([
             "我们提供了一个可以说是违反了Java语法的工具, 那就是ThrowHelper, 只要提供了一个Throwable, 不管你有没有标注throws",
             "他都能抛",
-            {type:'code',mode:'java',height:"90px",code:'\
+            {
+                type: 'code', mode: 'java', height: "90px", code: '\
 public class Main{\n\
     public static void main(String[] args){\n\
         cn.mcres.gyhhy.MXLib.ThrowHelper.getInstance().thr(new IOException());\n\

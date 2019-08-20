@@ -62,3 +62,11 @@
     left: 20px;
     opacity: 1;
 }
+@media (max-width: 700px){
+    .container{
+        flex-direction: column-reverse;
+    }
+    .container>.pages{
+        width: auto;
+    }
+}
