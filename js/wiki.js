@@ -261,5 +261,34 @@ if(ins == null){\n\
 }'
             }
         ]))
+        .append(new a.PageDown().name("URL Protocol").append(new a.Show().name("主目录").value(["我们封装了些许数据方法, 这也许会对你有十分大的用处 这个区域的内容可以脱离Bukkit运行",
+            document.createElement("br"), "如果你是在 public static void main(String[] args) 运行的, 请运行此句",
+            a.text(document.createElement("pre"), "cn.mcres.gyhhy.MXLib.http.URLStreamManager.load();")]))
+            .append(new a.Show().name("Rcon").value(["RCON, 我们远程连接服务器所使用的协议, 十分熟悉吧", {
+                type: 'code', mode: 'java', height: '250px', code: '\
+import java.net.*;\nimport java.io.*;\n\n\n\
+cn.mcres.gyhhy.MXLib.http.URLStreamManager.load(); // 如果你是在 public static void main(String[] args) 运行的, 请运行此句\n\n\
+URL rcon = new URL("rcon://localhost:25575");\n\
+URLConnection con = url.openConnection();\n\
+con.addRequestProperty("passwd", "RCON Password");\n\
+try(Closeable unuse = (Closeable)con){\n\
+    PrintStream ps = new PrintStream(con.getOutputStream());\n\
+    ps.println("?"); ps.println("list");\n\
+    try(Scanner scanner = new Scanner(con.getInputStream()){\n\
+        while(scanner.hasNextLine()) System.out.println(scanner.nextLine());\n\
+    }\n\
+}'
+            }])).append(new a.Show().name("Base64").value([
+                "我们提供了 base64 代理, 不过这个应该没啥用途", {
+                    type: 'code', mode: 'java', height: '150px', code: '\
+URLStreamManager.load();\nInputStream stream = new URL("base64:UE9JJTIx").openStream();'}
+            ])).append(new a.Show().name("Data").value([
+                "如果你是前端开发者的话, 你90%用过 data: 吧, 现在, 我们成功将它搬到了Java里面!", document.createElement("br"), {
+                    type: 'code', mode: 'java', height: '250px', code: '\
+URL u = new URL("data:" + datas); // 这将返还datas 的内容, 不过得保证里面没有 \',\'\n\n\
+URL u = new URL("data:,"+datas); // 这是推荐的方法,不会错误解析\n\n\
+URL u = new URL("data:charset=gbk,"+datas); //将使用 gbk 编码\n\n\
+URL u = new URL("data:base64,"+base64); // 将使用base64解码内容, 可用于图片传输'}
+            ])))
         ;
 })();
