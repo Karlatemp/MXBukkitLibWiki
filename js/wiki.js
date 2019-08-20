@@ -244,5 +244,22 @@ public class Main{\n\
     }\n\
 }'}
         ]))
+        .append(new a.Show().name("JVMHelper").value([
+            "我们提供了一个超强的功能,但是他需要 JDK Runtime 的支持", {
+                type: 'code', mode: 'java', height: '250px', code: '\
+import cn.mcres.gyhhy.MXLib.system.VMHelper;\n\
+import java.lang.instrument.Instrumentation;\n\n\
+VMHelper jvm = VMHelper.getHelper();\n\
+if(jvm == null){\n\
+    System.out.println("当前JVM环境未加载Helper, 关闭!");\n\
+    return;\n\
+}\n\
+Instrumentation ins = jvm.getInstrumentation();\n\
+if(ins == null){\n\
+    System.out.println("当前JVM环境未加载Helper, 关闭!");\n\
+    return;\n\
+}'
+            }
+        ]))
         ;
 })();
