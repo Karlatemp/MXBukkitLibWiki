@@ -1,0 +1,29 @@
+.wc-pool{
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+}
+.wc-underline{
+    text-decoration: underline;
+}
+.wc-bold{
+    font-weight: bold;
+}
+.wc-color0{color: black;}
+.wc-color1{color: red;}
+.wc-color2{color: green;}
+.wc-color3{color: yellow;}
+.wc-color4{color: blue;}
+.wc-color5{color: purple;}
+.wc-color6{color: cyan;}
+.wc-color7{color: white;}
+
+.wc-bg0{background-color: black;}
+.wc-bg1{background-color: red;}
+.wc-bg2{background-color: green;}
+.wc-bg3{background-color: yellow;}
+.wc-bg4{background-color: blue;}
+.wc-bg5{background-color: purple;}
+.wc-bg6{background-color: cyan;}
+.wc-bg7{background-color: white;}

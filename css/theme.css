@@ -1,3 +1,5 @@
+@import './console.css';
+
 .darkglass{
     background-color: #00000077;
 }
@@ -13,7 +15,7 @@
     background-color: rgba(0, 255, 255, 0.287);
 }
 .container>.pages{
-    width: 230px;
+    width: 280px;
 }
 .container>.nv{
     display: block;
@@ -35,6 +37,7 @@
     font-size: 20px;
     line-height: 30px;
     display: block;
+    white-space: nowrap;
 }
 .button.ico::before {
     display: inline-block;
@@ -61,6 +64,38 @@
 .button.ico.active::after{
     left: 20px;
     opacity: 1;
+}
+.make-package-view-pool{
+    display: block;
+    background-color: #00000066;
+    font-family: monospace;
+    white-space: pre;
+}
+.make-package-view-file{
+    color: #23a9d1;
+}
+.make-package-view-title{
+    color: #f1af14;
+}
+.make-package-view-const{
+    position: relative;
+    left: 0;
+    top: 0;
+    padding-left: 15px;
+}
+.make-package-view-const::before{
+    transition: background-color .3s;
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background-color: #ffffff30;
+    display: block;
+}
+.make-package-view-const:hover::before{
+    background-color: #fffffff0;
 }
 @media (max-width: 700px){
     .container{
