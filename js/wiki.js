@@ -24,6 +24,7 @@
         .append(new a.Show().name("lastest.log.gz读取").value(
             function () {
                 var pool = document.createElement("div");
+                if(!window.WConsole) return pool;
                 var fileSelector = document.createElement("input");
                 fileSelector.type = "file";
                 var WConsole = WebConsole();
