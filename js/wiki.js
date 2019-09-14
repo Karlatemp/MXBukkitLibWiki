@@ -24,7 +24,7 @@
         .append(new a.Show().name("lastest.log.gz读取").value(
             function () {
                 var pool = document.createElement("div");
-                if(!window.WConsole) return pool;
+                if (!window.WConsole) return pool;
                 var fileSelector = document.createElement("input");
                 fileSelector.type = "file";
                 var WConsole = WebConsole();
@@ -200,8 +200,166 @@ public class C1{\n\
     ).append(
         new a.PageDown().name("内置模块")
             .append(new a.Show().name("BeanManager").value([
-                "?"
+                "我们提供了BeanManager以供管理使用, 下面是默认处理方法(在BeanManager被赋值前是可被覆盖的)", tk.br(),
+                {
+                    type: 'package', pck: {
+                        "<T> void addBean(@NotNull Class<T> clazz,@NotNull T bean)": [
+                            "检查 Class 是否被注解: ProhibitBean 并根据实际情况决定时候忽略此Bean",
+                            "执行替换 Bean 方法"
+                        ], "@Nullable <T> T getBean(@NotNull Class<T> type)": [
+                            "直接搜索Bean方法, 请注意, 搜索 IBeanManager.class 是无意义行为."
+                        ], "@NotNull <T> T getBeanNonNull(Class<T> type)": [
+                            "首先Bean对象", "对对象进行判断, 会抛出NullPointerException", "返回Bean", "",
+                            "T bean = getBean(type);", "if (bean == null)", "    throw new NullPointerException();", "return bean;"
+                        ]
+                    }
+                }
             ]))
+            .append(new a.Show().name("2.0文件结构").value({
+                type: 'package', pck: {
+                    'cn.mcres.karlatemp.mxlib': {
+                        annotations: {
+                            'Bean.java': ["AutoConfig 用, 标记需要注册的Bean"],
+                            'CommandHandle.java': ["命令模块使用, 标记命令入口"],
+                            'CommandTabHandle.java': ["命令模块使用, 标记Tab列表入口"],
+                            'Configuration.java': ["AutoConfig使用, 标记这是一个Configuration"],
+                            'ProhibitBean.java': ["标记不应该被注册到BeanManager"],
+                            'ProhibitType.java': [
+                                "PB.java用, 定义忽略类型, 默认ALL_WITH_SUBCLASS",
+                                {
+                                    'ONLY_CURRENT': "不允许直接注册当前类, 但是允许子类注册",
+                                    'ALL_WITH_SUCLASS': '不允许自己&子类&实现类注册'
+                                }
+                            ],
+                            'Resource.java': ['定义资源使用']
+                        },
+                        bean: {
+                            'IBeanManager.java': [
+                                "BeanManager核心",
+                                {
+                                    "<T> void addBean(@NotNull Class<T>, T)": "注册/覆盖Bean",
+                                    "@Nullable <T> T getBean(@NotNull Class<T>)": "在BeanManager搜索Bean",
+                                    "@NotNull <T> T getBeanNonNull(@NotNull Class<?>)": "见 BeanManager章节",
+                                    "@NotNull <T> Optional<T> getOptional(@NotNull Class<T>)": "略",
+                                    "@NotNull Map<Class<?>, Object> getBeans()": "获取全部Bean"
+                                }
+                            ],
+                            'IEnvironmentFactory.java': [
+                                "环境构造器(读取配置的)"
+                            ],
+                            "IInjector.java": [
+                                "为对象注入 @Resource 字段对应的内容",
+                                {
+                                    "<T> T inject(@NotNull T)": "注入对象(非static字段)",
+                                    "<T> void inject(@NotNull Class<T>)": "注入类(static字段)"
+                                }
+                            ]
+                        },
+                        bukkit: [
+                            "<Error>"
+                        ],
+                        logging: {
+                            "ILogger.java": [
+                                "日志系统的核心"
+                            ],
+                            "IMessageFactory.java": [
+                                "ILogger的信息处理器(格式化器Formatter)",
+                                {
+                                    "String excpre(String)": "获取输入值相当于多少个空格",
+                                    "String toConsole(String)": "获取能正确输出到控制台的值"
+                                }
+                            ],
+                            "PrefixSupplier.java": [
+                                "前缀处理器"
+                            ],
+                            "Ansi.java": [
+                                "输出Ansi(彩色), 内置代码来源 Bukkit, Windows CMD使用需要JANSI"
+                            ],
+                            "MessageFactoryImpl.java": "默认实现方法, 没有ANSI颜色",
+                            "MessageFactoryAnsi.java": "继承于MessageFactoryImpl, 拥有ANSI颜色",
+                            "MessageFactoryBukkit.java": "于MessageFactoryAnsi一样,但是不是使用ANSI而是Bukkit的 §",
+                            "AbstractLogger.java": "实现了基本ILogger.java",
+                            "AbstractBaseLogger.java": "继承于AbstractLogger, 只需要实现 输出一行的方法 writeLine() 和获取前缀的方法 getPrefix() 就行",
+                            "PrintStreamLogger.java": "继承于AbstractBaseLogger, 将把日志输出到PrintStream上",
+                            "MLoggerHandler.java": "继承于 java.util.logging.Handler, 把java原生日志输出到ILogger里",
+                            "MLogger.java": "继承于java.util.logging.Logger, 把日志转输出到一个Handler上, 此日志器不能添加Handler以及修改Parent"
+                        },
+                        tools: {
+                            "CharCompiler.java": [
+                                "URI编码/解码用,可自定义"
+                            ],
+                            "EmptyStream.java": "空操作流",
+                            "IClassScanner.java": "Class搜索器",
+                            "IMemberScanner.java": "类的全部成员搜索器",
+                            "IObjectCreator.java": "对象创建器, 目标构造器参数为BeanManger搜索的值",
+                            "MapBuilder.java": "Map构造工具",
+                            "Pointer.java": "当做指针用",
+                            "SaftList.java": "添加了验证的List",
+                            "ThrowHelper.java": "错误抛出器, 可强制抛出错误(throw checked throwable)",
+                            "Toolkit.java": [
+                                "工具集合",
+                                {
+                                    "String getPackageByClassName(String className)": "截取className的包名",
+                                    "String getClassSimpleName(String className)": "截取className的简短名",
+                                    "Comparator<String> getPackageComparator()": "获取package比较器",
+                                    "<T> Class<T> getClass(T obj)": "安全取Class",
+                                    "boolean isNum(String val)": "简易判断是否是正整数数字(没长度限制)",
+                                    "Reflection.java": {
+                                        "MethodHandles.Lookup getRoot()": "获取最高权限的Lookup",
+                                        "Class<?> defineClass(ClassLoader loader,String name,byte[] code,int off,int len,ProtocentionDomain protectionDomain)":
+                                            "在ClassLoader加载一个类, 如果ClassLoader里有重复类将会报错, 常用于加载动态生成的类",
+                                        "Class<?> getCallerClass()": "获取当前方法是谁访问的, 就像sun.reflection.getCallerClass() 一样,但是没有任何限制",
+                                        "Class<?> getCallerClass(int pos)": [
+                                            "获取第 ${pos} 个访问者", "",
+                                            "\
+class Core{\n\
+    void run(){\n\
+        System.out.println(Toolkit.Reflection.getCallerClass()); // Proxy.class\n\
+        System.out.println(Toolkit.Reflection.getCallerClass(0));// Proxy.class\n\
+        System.out.println(Toolkit.Reflection.getCallerClass(1));// Proxy2.class\n\
+        System.out.println(Toolkit.Reflection.getCallerClass(2));// RealCaller.class\n\
+        for(Object o : new Throwable().getStackTrace()) System.out.println(o); // Dump Stack Trace\n\
+    }\n\
+}\nclass Proxy{\n\
+    void run(){\n\
+        new Core().run();\n\
+    }\n\
+}\nclass Proxy2{\n\
+    void run(){\n\
+        new Proxy().run();\n\
+    }\n\
+}\npublic class RealCaller{\n\
+    public static void main(String[] args){\n\
+        new Proxy2().run();\n\
+    }\n\
+}"
+                                        ]
+                                    },
+                                    "StackTrace": [
+                                        "StackTraceElement和Class, 真正意义上的堆栈",
+                                        "实现原理: java.lang.SecurityManager 的 protected native Class<?>[] getClassContext() 方法",
+                                        {
+                                            "StackTrace[] getStackTraces()": "获取当前线程的堆栈",
+                                            "Class[] getClassContext()": "获取当前线程的堆栈"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "MXBukkitLib.java": [
+                            "核心转储类",
+                            {
+                                "public static final String BUILD_VERSION": "获取MXLib的版本, 可用于构造依赖版本显示(用于构建时)",
+                                "public static String getCurrentVersion()": "同上,但是因为是函数所以是用于运行时显示的",
+                                "public static IBeanManager getBeanManager()": "获取BeanManager",
+                                "public static ILogger getLogger()": "获取日志系统",
+                                "public static void setLogger(ILogger logger)": "覆盖日志系统",
+                                "public static synchronized void setBeanManager(@NotNull IBeanManager bm)": "设置BeanManager, 如果已经被设置了就会报错"
+                            }
+                        ]
+                    }
+                }
+            }))
     )
         ;
     a.append(Tools);
