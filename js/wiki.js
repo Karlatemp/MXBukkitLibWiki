@@ -1,4 +1,5 @@
 !(function () {
+    var a = Website;
     var tk = {
         br() {
             return document.createElement("br");
@@ -15,16 +16,253 @@
                 a.addEventListener("click", chandler);
             }
             return a;
+        },
+        path(value, pt) {
+            return BBox.create('a').text(value)
+                .propertie('href', "javascript:void(0)").on('click', function () {
+                    a.open(pt);
+                }).dom;
         }
     };
-    var a = Website;
+    (function () {
+        var ind;
+        a.append(ind = new a.Show().name("Index").value([
+            "MXLib 是一个集合了许多功能的工具. 拥有极高的可自定义模式. 比如",
+            BBox.create("a").propertie("href", "https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/Toolkit.Reflection.html#getCallerClass()")
+                .text("Toolkit.Reflection.getCallerClass()").dom,
+            ', 你可以用他代替 sun.reflect.Reflection.getCallerClass()',
+            BBox.create('p').node("我们提供了可控的")
+                .newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/util/PermissibleCollection.html", "Collection对象")
+                .node(", 能控制Collection只能做什么, 比如只能调用 add, 只能写不能读等...")
+                .newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/util/PCollectionPermission.html#ONLY_SET")
+                .dom
+        ]));
+        if (!location.hash)
+            ind.onClick();
+    })();
+    a.append(new a.PageDown().name("主文档").id("m").append(
+        new a.PageDown().name("cn.mcres.karlatemp.mxlib").id("pck")
+            .append(new a.PageDown().name("annotations").id('ann')
+                .append(new a.Show().name("Bean").value([
+                    "代表这是一个Bean, 可以注解到类上表示他是需要在BeanManager获取的, 但是这只是让开发者读的", tk.br(),
+                    "我们更多的是用于", tk.path("AutoConfig", ['m', 'use', 'ac']),
+                    "的解析."
+                ]))
+                .append(new a.Show().name("@Configuration").id('conf').value([
+                    "标记此类是一个 ", tk.path("AutoConfig", ['m', 'use', 'ac'])
+                ]))
+                .append(new a.Show().name("@Depend").id('dep').value([
+                    "Depend 依赖系统, 表示满足Depend才会尝试加载类, 目前对 AutoConfig 无效!",
+                    tk.path("2.2 Depend系统", ['2.2', 'anno', 'Depend'])
+                ]))
+                .append(new a.Show().name("@AutoInstall").id('ai').value([
+                    "@see ", tk.path('2.2/AutoInstall', ['2.2', 'anno', 'AutoInstall'])
+                ]))
+                .append(new a.Show().name("@ProhibitBean").id('pb').value([
+                    "如果一个类注解了 @ProhibitBean, 他们这个类将无法作为 type 加入到 BeanManager",
+                    BBox.create('pre').text('\
+value: 默认值: ALL_WITH_SUBCLASS\n\
+    ALL_WITH_SUBCLASS:\n\
+        此类和此类的子类/实现类都无法被注册到BeanManager\n\
+        @ProhibitBean class Root{}\n\
+        class Extend extends Root{}\n\
+        MXBukkitLib.getBeanManager().addBean(Extend.class, new Extend()); // 将不会执行 add 动作\n\
+    ONLY_CURRENT:\n\
+        只有此类不能作为type注册到BeanManager\n\
+        @ProhubitBean(ProhibitType.ONLY_CURRENT) class Root{}\n\
+        class Extend extends Root{}\n\
+        MXBukkitLib.getBeanManager().addBean(Root.class,   new Extend()); // 将不会执行 add 动作\n\
+        MXBukkitLib.getBeanManager().addBean(Extend.class, new Extend()); // 将会运行这 add 动作')
+                ]))
+                .append(new a.Show().name("@Resource").id('res').value([
+                    "@Resource, 用于字段, 由MXLib进行注入加载, 可以是static值也可以是非static值, 但是不能为 final 值, 用过SpringMVC的应该很熟"
+                ]))
+            ).append(new a.PageDown().name("configuration").id('conf')
+                .append(new a.Show().name('IConfigurationProcessor').id('processor').value([
+                    "IConfigurationProcessor. 十分简单, 就是用来解析类配置文件的.",
+                    tk.path("详见 AutoConfig", ['m', 'use', 'ac'])
+                ]))
+            ).append(new a.PageDown().name("tools").id("t")
+                .append(new a.Show().name("CharCompiler").value([
+                    'CharCompiler, 可用于URI编译, 还可以用非 \'%\' 字符', tk.br(),
+                    "@see ", BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/CharCompiler.html", "JavaDoc")
+                ]))
+                .append(new a.Show().name("ResourceLoader(s)").id('res_loader').value([
+                    "ResourceLoader, 类资源搜索器 见",
+                    tk.path("2.2更新", ['2.2', 'module', 'ResourceLoader'])
+                ]))
+                .append(new a.Show().name("ClassResourceLoader(s)").id("class_res_loader").value([
+                    "类字节码搜索器, 见",
+                    tk.path('2.2 Update', ['2.2', 'module', 'ClassResourceLoader'])
+                ]))
+                .append(new a.Show().name("ServiceInstaller(s)").id("service_installer").value([
+                    "服务安装器, 见",
+                    tk.path('2.2 Update', ['2.2', 'module', 'ServiceInstaller'])
+                ]))
+                .append(new a.Show().name("DependChecker").value([
+                    "DC, Depend System核心, 用于验证Depend是否有效, 见",
+                    tk.path('2.2 @Depend', ['2.2', 'anno', 'Depend'])
+                ]))
+                .append(new a.Show().name("EmptyStream").id("es").value([
+                    "EmptyStream, 空IO操作流, read方法永远为 -1, 执行write啥都不会做. ",
+                    BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/EmptyStream.html", "JavaDoc")
+                ]))
+                .append(new a.Show().name("IClassScanner").id("class_scan").value([
+                    "IClassScanner, 可在 BeanManager 获取, MXLib的自动搜索功能全得益于此类. 全部方法的返回值和传入的 list 相同(为同一个对象)"
+                ]))
+                .append(new a.Show().name("IMemberScanner").id("mem_scan").value([
+                    "搜索Class下的全部成员工具, 在BeanManager获取"
+                ]))
+                .append(new a.Show().name("IObjectCreator").id("obj_creator").value([
+                    "IObjectCreator, 用于直接创建一个对象, 方法的构造器的参数将使用BeanManager的值"
+                ]))
+                .append(new a.Show().name("ThrowHelper").id('thr').value([
+                    "ThrowHelper. 可用于抛出一个错误. 无论这个错误时候是 checked 还是 unchecked 的",
+                    { type: 'code', code: 'return ThrowHelper.thrown(new Exception());', height: '20px', mode: 'java' }
+                ]))
+                .append(new a.Show().name("Toolkit").value([
+                    BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/Toolkit.html", "JavaDoc")
+                ]))
+                .append(new a.Show().name("Toolkit.Reflection").id("reflection").value([
+                    BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/Toolkit.Reflection.html", "JavaDoc"), tk.br(),
+                    {
+                        type: 'package', pck: {
+                            'defineClass(ClassLoader, String, byte[], int, int, ProtectionDomain)':
+                                '这相当于动态调用ClassLoader的define方法, 用于动态生成类',
+                            'getCallerClass()': '获取访问者. 代替 sun.reflect.Reflection.getCallerClass()',
+                            'loadClassForm(String, Collectio<ClassLoader>)': '尝试从一个集合查找ClassLoader',
+                            'setAccess(T, boolean)': '相当于 T.setAccessible(boolean); 然后 return T;'
+                        }
+                    }
+                ]))
+            ).append(new a.PageDown().name("logging").id('l')
+                .append(new a.Show().name("Ansi").value([
+                    "Bukkit颜色代码转Ansi工具 @see",
+                    BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/logging/Ansi.html", "JavaDoc")
+                ]))
+                .append(new a.Show().name("ILogger").id('il').value(
+                    "ILogger, 最基础的日志系统"
+                ))
+                .append(new a.Show().name("AbstractLogger").id("al").value("提供了基础了ILogger实现, 没有Prefix支持"))
+                .append(new a.Show().name("AbstractBaseLogger").id("abl").value("基本的日志系统, 提供了Prefix支持, 每次输出一行信息.(以行为处理单位)"))
+                .append(new a.Show().name("PrintStreamLogger").id("psl").value("使用PrintStream的日志系统"))
+                .append(new a.Show().name("IMessageFactory").id("msg_fac").value("MessageFactory用于格式化ILogger的输出."))
+                .append(new a.Show().name("MessageFactoryImpl").id('mfi').value("提供了实现基础, 我们推荐您的自定义MessageFactory继承此类, 带Java9+ Module支持"))
+                .append(new a.Show().name("MessageFactoryAnsi").id("mfa").value("和impl一样, 不过提供了Ansi支持"))
+                .append(new a.Show().name("MLogger").value("把我们的ILogger转为Java原生Logger, new MLogger(\"MXLib\", null, new PrintStreamLogger(....));"))
+                .append(new a.Show().name("MLoggerHandler").value("原生日志系统的Handler, java.util.logging.Logger.addHandler(new MLoggerHandler(...));"))
+            )
+    ).append(
+        new a.PageDown().name("在你的项目中使用").id('use').append(
+            new a.Show().name("AutoConfig").id('ac').value([
+                "AutoConfig, 就是用来注册Config的, 我们对于AutoConfig有以下要求: ",
+                BBox.create('pre').text('\
+0. 最重要的一点: 类名必须以 "AutoConfig" 结尾, 用于搜索, 比如 "你好AutoConfig", 为了增加你自己的可读性请少用诸如 AAutoConfig 之类的名字\n\
+1. AutoConfig 不应该继承另一个AutoConfig\n\
+2. AutoConfig 必须标记 ').append(tk.path('@Configuration', ['m', 'pck', 'ann', 'conf'])).node(', 用于确定这是一个 AutoConfig\n\
+3. 我们对方法名没有任何规定, 比如 "@Bean void 你好世界(){}", 但是为了增加你的代码可读性(对于你自己/对于开源), 还请用你自己能理解的名字来命名'),
+                "AutoConfig是用以注册Bean的, 你可以看我们的",
+                BBox.newLink("https://github.com/Karlatemp/MXBukkitLib/blob/master/Share/src/cn/mcres/karlatemp/mxlib/share/PluginAutoConfig.java", "内置示例"), tk.br(),
+                '第0点: 类名必须以 "AutoConfig" 结尾, OK.', tk.br(),
+                "第1点: 没有继承其他的AutoConfig. OK.", tk.br(),
+                "第2点: 标记了 @Configuration, OK", tk.br(), tk.br(),
+                "我们看到下面的 mf()", tk.br(),
+                "@Bean -> 代表这个方法体会注册一个Bean. IConfigurationProcessor 会调用全部带 @Bean 注解的方法", tk.br(),
+                "然后是返回类型 IMessageFactory, 表示注册的类型是 IMessageFactory", tk.br(),
+                "return new BukkitPluginMessageFactory() -> 表示要注册的具体示例", tk.br(),
+                "另请参阅 ", BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/bean/IBeanManager.html#addBean(java.lang.Class,T)", "IBeanManager#addBean(java.lang.Class,T)"), tk.br(), tk.br(),
+                "然后是下面的 processor(ICommandProcessor), 这个方法带了一个参数, 这个参数的值就是在运行当前方法时 BeanManager 中对应的Bean.", tk.br(),
+                "另请参阅 ", BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/bean/IBeanManager.html#getBean(java.lang.Class)", "IBeanManager#getBean(java.lang.Class)"), tk.br(), tk.br(),
+                "最底下的 onBoot(..), 他是一个 void 方法, 这个方法同样会执行, 十分的方便"
+            ])
+        )
+    ));
+    a.append(new a.PageDown().name("2.2").append(
+        new a.PageDown().name("新增注解").id("anno").append(
+            new a.Show().name("Depend").value([
+                "这个注解表示一个依赖. 代表这个依赖是有效的才会尝试加载",
+                BBox.create("p")
+                    .newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/annotations/Depend.html", "JavaDoc").create('br').parent()
+                    .newLink("https://github.com/Karlatemp/MXBukkitLib/blob/master/Static/src/cn/mcres/karlatemp/mxlib/SharedConfigurationProcessor.java")
+                    .dom,
+                BBox.create("p").node("WARMING: 根据MXLib加载的")
+                    .newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/DependChecker.html", "DependChecker")
+                    .node("的不同可能会有所差别, 下面是")
+                    .newLink("https://github.com/Karlatemp/MXBukkitLib/blob/master/Share/src/cn/mcres/karlatemp/mxlib/share/BukkitDependChecker.java", "Bukkit")
+                    .node("的").color("#ff5f5f")
+                    .dom,
+                {
+                    type: 'package', pck: {
+                        'value': "所需要的插件", 'vesion': '插件所需要的版本', 'compare': '\
+版本号的比较方式, 可为这些值\n\
+-1 需要给定版本号之前的版本(可用给定版本号)\n\
+      version = 1.0; [0.1 OK]       [1.0 OK]       [1.1 Unload.]\n\
+-2 需要给定版本号之前的版本(不为此版本号)\n\
+      version = 1.0; [0.1 OK]       [1.0 Unload.]  [1.1 Unload.]\n\
+ 0 需要与给定版本号相同的依赖\n\
+ 1 需要此版本之后的依赖(包括此版本)\n\
+      version = 1.0; [0.1 Unloaded] [1.0 OK]       [1.1 OK]\n\
+ 2  需要此版本之后的依赖(不包括此版本)\n\
+      version = 1.0; [0.1 Unloaded] [1.0 Unloaded] [1.1 OK]' }
+                }
+            ])
+        ).append(new a.Show().name("AutoInstall").value(
+            BBox.create("p").node("我们使用AutoInstall标记自动注册的内容")
+                .create('br').parent().node('这将会调用 ')
+                .newLink('javascript:void(0)', 'ServiceInstallers', true).on('click', function () {
+                    a.open(["2.2", "module", "ServiceInstaller"], true);
+                }).parent()
+                .dom
+        ))
+    ).append(new a.PageDown().name("新增模块").id("module").append(
+        new a.Show().name("ServiceInstaller").value([
+            "ServiceInstaller. 他就只有一个方法", tk.br(),
+            BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/ServiceInstaller.html#install(java.lang.Class)", "boolean install(Class)"),
+            ", 十分简单, 他的返回值就是是否成功安装这个Class.", tk.br(),
+            "但是我们不允许直接注册(Bean)ServiceInstall, 因为可以有多个ServiceInstall, 所以我们使用",
+            BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/ServiceInstallers.html", "ServiceInstallers"),
+            "我们用BeanManager获取并add ServiceInstaller 就成功安装进去了", tk.br(), tk.br(),
+            BBox.create("pre").text("\
+MXBukkit.getBeanManager().getBeanNonNull(ServiceInstallers.class).add(...);\n\n\
+ServiceInstaller 规范:\n\
+0. 不应该处理全部的类, 因为还有其他的ServiceInstaller\n\
+1. 当不处理这个类的时候, 应该返回 false.\n\
+2. 处理一个类, 无论成功与否, 都应该返回 true. 除非你想让其他ServiceInstaller接手.\n\
+3. 如果在处理中处理失败, 直接抛出错误.或者ignore, 不要返回 false. 除非你想让其他ServiceInstaller接手.\n\
+4. 如果你想让让后续的ServiceInstaller继续处理的话, 返回 false.").dom
+        ])
+    ).append(new a.Show().name("ResourceLoader").value([
+        "ResourceLoader, MXLib 搜索资源用, 和 ServiceInstaller 相似, 注册需要使用 ResourceLoaders"
+    ])).append(new a.Show().name("ClassResourceLoader").value([
+        "ClassResourceLoader, 继承于 ResourceLoader, 是MXLib设计专门用来搜索类的字节码的. ",
+        BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/tools/ClassResourceLoader.html", "JavaDoc"),
+        tk.br(), "特别要注意的是, ClassResourceLoader直接注定了Depend系统能否正常工作, 如果无法通过ClassResourceLoaders搜索到字节码的话Depend将不会发挥任何作用."
+    ])).append(new a.Show().name("MXLibBootProvider").id('provider').value([
+        "MXLibBootProvider, 看名字就能知道, 他是为MXLib提供Boot服务的, 详情看",
+        BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/SharedMXLibBootProvider.html", "JavaDoc"),
+        tk.br(), '在调用 MXBukkitLib.boot() 后, 如果MXLib需要boot那么将会调用一次',
+        BBox.newLink("https://karlatemp.github.io/MXBukkitLib/cn/mcres/karlatemp/mxlib/event/core/MXLibBootEvent.html", "cn.mcres.karlatemp.mxlib.event.core.MXLibBootEvent"),
+        ", 我们可以监听此事件达到修改Provider的加载顺序,添加/删除Provider.",
+        BBox.create("s").text("这让我想到了 JavaAgent").color('gray').dom
+    ])).append(new a.Show().name("Event System").id("es").value([
+        "从 2.2 开始, MXLib内置了一套事件系统.",
+        BBox.create("pre").text("\
+我们的Event创建规范:\n\
+0. Event类必须得能获取一个HandlerList;\n\
+1. 必须定义 pblic static final HandlerList<MXLibBootEvent> handlers = new HandlerList<>();\n\
+   (可以是继承来的), 未来将会通过此规范创建Listener集合, 就像bukkit一样\n\
+2. public HandlerList getHandlerList() 的返回值必须是 handlers 常量, 否则将导致执行错误.\n\n\
+怎么触发这个事件?\n\
+0. new ...Event().post();\n\
+1. ...Event event = Event.post(new ...Event());").dom
+    ]))));
     var V1_0 = new a.PageDown().name("1.0");
     var V2_0 = new a.PageDown().name("2.0");
     var Tools = new a.PageDown().name("工具")
         .append(new a.Show().name("lastest.log.gz读取").value(
             function () {
                 var pool = document.createElement("div");
-                if (!window.WConsole) return pool;
+                if (!window.WebConsole) return pool;
                 var fileSelector = document.createElement("input");
                 fileSelector.type = "file";
                 var WConsole = WebConsole();

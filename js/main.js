@@ -45,12 +45,35 @@ var Website = (function () {
     class Text extends Compon {
         constructor() {
             super();
+            /**
+             * @type {string | null}
+             */
+            this.id_ = null;
         }
+        /**
+         * 
+         * @param {* | undefined} value
+         * @returns {string & this} 
+         */
         name(value) {
             if (value == null) {
                 return this.dom.textContent;
             }
             this.dom.textContent = value;
+            return this;
+        }
+        /**
+         * 
+         * @param {* | undefined} value
+         * @returns {string & this} 
+         */
+        id(v) {
+            if (v == null) {
+                var id = this.id_;
+                if (id == null) return this.name(null);
+                return id;
+            }
+            this.id_ = v;
             return this;
         }
     }
@@ -104,7 +127,7 @@ var Website = (function () {
             this.down.appendChild(compon.dom);
             compon.parent = this;
             if (compon instanceof Text) {
-                this.doms[compon.name()] = compon;
+                this.doms[compon.id()] = compon;
             }
             return this;
         }
@@ -119,6 +142,7 @@ var Website = (function () {
         if (values == null) {
             return document.createTextNode(String(values));
         }
+        if (values instanceof BBox) return values.dom;
         switch (typeof values) {
             case "function": {
                 return values();
@@ -327,11 +351,10 @@ var Website = (function () {
         onClick() {
             var title_ = this.name();
             let p = this.parent;
-            let path = [title_];
+            let path = [this.id()];
             while (p != null) {
-                let pn = p.name();
-                path.unshift(pn);
-                title_ = pn + " > " + title_;
+                path.unshift(p.id());
+                title_ = p.name() + " > " + title_;
                 p = p.parent;
             }
             awsl(pathenc(path, true), true);
@@ -364,7 +387,7 @@ var Website = (function () {
     sys.append = (compon) => {
         pages.appendChild(compon.dom);
         if (compon instanceof Text) {
-            doms[compon.name()] = compon;
+            doms[compon.id()] = compon;
         }
         return sys;
     };
