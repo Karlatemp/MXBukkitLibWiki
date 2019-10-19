@@ -177,6 +177,318 @@ value: 默认值: ALL_WITH_SUBCLASS\n\
             ])
         )
     ));
+    a.append(new a.PageDown().name("2.4").append(
+        new a.PageDown().name("CompilationEvalProcessor").id("cep").append(
+            new a.Show().name("主介绍").id("cep").value([
+                "我们准备了CEP, 实现类似汇编的编写, 目前我们需要一份高级语言的解析, 有意者联系 QQ: 3279826484", tk.br(),
+                "使用以下方法调用",
+                {
+                    type: "code", height: "500px", mode: 'java', code: '\
+import cn.mcres.karlatemp.mxlib.tools.CompilationEvalProcessor;\n\
+import cn.mcres.karlatemp.mxlib.tools.IEvalProcessor;\n\
+import cn.mcres.karlatemp.mxlib.tools.MapBuilder;\n\
+\n\
+import java.io.InputStream;\n\
+import java.io.InputStreamReader;\n\
+import java.nio.charset.StandardCharsets;\n\
+import java.util.Arrays;\n\
+import java.util.HashMap;\n\
+import java.util.Scanner;\n\
+\n\
+public class EvalTester {\n\
+\n\
+    public static void main(String[] args) throws Throwable {\n\
+        CompilationEvalProcessor cp = CompilationEvalProcessor.open();\n\
+        Object ref = cp.compile(new Scanner(new InputStreamReader(\n\
+                EvalTester.class.getResourceAsStream("test.txt"),\n\
+                StandardCharsets.UTF_8\n\
+        ))).invoke(new MapBuilder<String, Object>().add("Sys.out.pl",\n\
+                (IEvalProcessor.Function.Lambda) (x, arg0) -> {\n\
+                    System.out.println(arg0[0]);\n\
+                    return null;\n\
+                }\n\
+        ));\n\
+        System.out.println(ref);\n\
+\n\
+    }\n\
+}'},
+                "我们可以把他拆分为这几部分", {
+                    type: "code", height: "500px", mode: 'java', code: '\
+import cn.mcres.karlatemp.mxlib.tools.CompilationEvalProcessor;\n\
+import cn.mcres.karlatemp.mxlib.tools.IEvalProcessor;\n\
+import cn.mcres.karlatemp.mxlib.tools.MapBuilder;\n\
+\n\
+import java.io.InputStream;\n\
+import java.io.InputStreamReader;\n\
+import java.nio.charset.StandardCharsets;\n\
+import java.util.Arrays;\n\
+import java.util.HashMap;\n\
+import java.util.Scanner;\n\
+\n\
+public class EvalTester {\n\
+\n\
+    public static void main(String[] args) throws Throwable {\n\
+        CompilationEvalProcessor cp = CompilationEvalProcessor.open(); // 创建 CEP\n\
+        IEvalProcessor.CompetedCode code = cp.compile(new Scanner(new InputStreamReader(\n\
+                EvalTester.class.getResourceAsStream("test.txt"),\n\
+                StandardCharsets.UTF_8\n\
+        ))); // 翻译进 Java 运行时\n\
+        Objecr ref = code.invoke(new MapBuilder<String, Object>().add("Sys.out.pl",// 添加 Sys.out.pl content\n\
+                (IEvalProcessor.Function.Lambda) (x, arg0) -> {\n\
+                    System.out.println(arg0[0]);\n\
+                    return null;\n\
+                }\n\
+        ));\n\
+        System.out.println(ref);\n\
+\n\
+    }\n\
+}'}, "对于需要重复调用的, 不应该每次调用都直接编译, 而是把CompetedCode存在内存里并使用CompetedCode"
+            ])
+        ).append(
+            new a.Show().name("test.txt").id('tt').value({
+                type: "code", mode: 'java', height: "500px", code: '\n\
+// 所有以 // 开头的为注释\n\
+// stacks, variables\n\
+// 文件开头定义可用的堆数量和变量数量, 目前配置: [5 stacks, 4 variables]\n\
+5 4\n\
+\n\
+// $3 = 777 + 333\n\
+put_int 777 // 把 777 推到堆顶\n\
+put_int 233 // 把 333 推到堆顶\n\
+add // 执行相加, 并把返回值推到堆顶\n\
+set_var 3 // 把堆顶的数据存到第 4 个变量中\n\
+\n\
+  // Sys.out.pl(null, "Var 3:" + $3)\n\
+  get_context Sys.out.pl// 取出 Sys.out.pl 的值, 这里注释左边没有空格是因为会变成 "Sys.out.pl "\n\
+  put_null\n\
+  put_string Var 3:\n\
+  get_var 3\n\
+  add\n\
+  // 堆栈情况: \n\
+  // "Var 3:"+$3    -> 参数列表, 可有更多, 具体数量有 invoke 控制\n\
+  // null           -> 传给函数的 this 指针\n\
+  // Function <Sys.out.pl> -> 函数\n\
+  invoke 1 // 执行函数, 1 代表传入 1 个参数\n\
+\n\
+put_long 666\n\
+put_long 555\n\
+// StackTrace:\n\
+// 555\n\
+// 666\n\
+subtract // 执行相减, 666 - 555\n\
+set_var 2\n\
+\n\
+  // Sys.out.pl(null, "Var 2:" + $2)\n\
+  get_context Sys.out.pl\n\
+  put_null\n\
+  put_string Var 2:\n\
+  get_var 2\n\
+  add\n\
+  invoke 1\n\
+\n\
+// Sys.out.pl(null, "RFR:" + ($2 + $3))\n\
+get_context Sys.out.pl\n\
+put_null\n\
+\n\
+put_string RFR: // "RFR:" + ($2 + $3)\n\
+  get_var 2\n\
+  get_var 3\n\
+  // 3\n  // 2\n  // "RFR:"\n  // null\n  // Function <Sys.out.pl> // Tips: 请注意堆栈大小\n\
+  add // $2 + $3\n\
+  // 5\n  // "RFR:"\n  // null\n  // Function <Sys.out.pl>\n\
+add\n\
+// "RFR:5"\n// null\n// Function <Sys.out.pl>\n\
+\n\
+invoke 1\n\
+\n\
+put_string Test message\n\
+\n\
+return\n\
+put_int 8848\n\
+put_null\n\
+get_context Sys.out.pl\n\
+invoke 1'})
+        )
+            .append(new a.Show().name("语法").id("grammar").value(
+                BBox.create("div").create("p").html("文件会无视左边的空格, 所以可以使用缩进增加可读性")
+                    .parent().create("p").html("全部以 // 开头的均为注释, 没有多行/区域注释").parent()
+                    .create("table").propertie("border", "1")
+
+                    .create("tr")
+                    .create("th").text("符号").parent().create("th").text("参数").parent().create("th").text("操作").parent().create("th").text("示例").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_null").parent().create("td").text("<none>").parent().create("td").text("把 null 推到堆顶").parent().create("td").text("put_null").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_NaN").parent().create("td").text("<none>").parent().create("td").text("把 NaN 推到堆顶").parent().create("td").text("put_NaN").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_Infinity").parent().create("td").text("<none>").parent().create("td").text("把 Infinity 推到堆顶").parent().create("td").text("put_Infinity").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_NInfinity").parent().create("td").text("<none>").parent().create("td").text("把 -Infinity 推到堆顶").parent().create("td").text("put_Infinity").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_int").parent().create("td").text("[int数字]").parent().create("td").text("把一个int类型的数字推到堆顶").parent().create("td").text("put_int 2333").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_long").parent().create("td").text("[long类型数字]").parent().create("td").text("把一个long类型的数字推到堆顶").parent().create("td").text("put_long 3279826484").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_short").parent().create("td").text("[short类型数字]").parent().create("td").text("把一个short类型的数字推到堆顶").parent().create("td").text("put_short 7777").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_bool").parent().create("td").text("[true/false]").parent().create("td").text("把一个布尔值推到堆顶").parent().create("td").text("put_bool false").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("put_string").parent().create("td").text("[一串文本[注意空格]]").parent().create("td").text("把一个字符串推到堆顶").parent().create("td").text("put_string WhatAreYouDoing?").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("get_context").parent().create("td").text("[context的key值[注意空格]]").parent().create("td").text("从context取值并推到堆顶").parent().create("td").text("ge_context Sys.out.pl").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("get_var").parent().create("td").text("[变量id]").parent().create("td").text("取出指定变量并推到堆顶").parent().create("td").text("get_var 0").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("set_var").parent().create("td").text("[变量]").parent().create("td").text("把堆顶的值存入变量把堆栈移前").parent().create("td").text("get_context Sys.out.pl").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("xor").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并进行异或操作").parent().create("td").text("xor").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("add").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并进行相加操作").parent().create("td").text("add").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("subtract").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并把第二位减第一位的值存入堆顶").parent().create("td").text("subtract").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("multiply").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并进行相乘操作").parent().create("td").text("multiply").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("divide").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并把第二位除以第一位的值存入堆顶").parent().create("td").text("divide").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("remainder").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并把第二位取余第一位的值存入堆顶, $2 % $1").parent().create("td").text("remainder").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("compare").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并把第二位于第一位的比较结果值存入堆顶").parent().create("td").text("compare").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("pow").parent().create("td").text("<none>").parent().create("td").text("取出堆顶的两个值并把第二位的第一位的次方比较结果值存入堆顶, Math.pow($2, $1)").parent().create("td").text("pow").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("abs").parent().create("td").text("<none>").parent().create("td").text("取堆顶的绝对值").parent().create("td").text("abs").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("or").parent().create("td").text("<none>").parent().create("td").text("把堆顶的两个值进行 或 操作, $2 | $1").parent().create("td").text("or").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("and").parent().create("td").text("<none>").parent().create("td").text("把堆顶的两个值进行 和 操作, $2 & $1").parent().create("td").text("or").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("negate").parent().create("td").text("<none>").parent().create("td").text("把堆顶值执行取反操作 ~$1").parent().create("td").text("negate").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("invoke").parent().create("td").text("[参数数量 n]").parent().create("td").text("执行函数 Function<$(2+n)> ($(1+n),...,$3,$2,$1)").parent().create("td").text("invoke 0").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("return").parent().create("td").text("<none>").parent().create("td").text("中断执行").parent().create("td").text("negate").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("random").parent().create("td").text("<none>").parent().create("td").text("把0~1的随机数值推入堆顶").parent().create("td").text("random").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("floor").parent().create("td").text("<none>").parent().create("td").text("把堆顶值去除小数部分").parent().create("td").text("floor").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("max").parent().create("td").text("<none>").parent().create("td").text("从堆顶取出两个值, 并把较大值放入堆顶").parent().create("td").text("max").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("min").parent().create("td").text("<none>").parent().create("td").text("从堆顶取出两个值, 并把较小值放入堆顶").parent().create("td").text("min").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("sqrt").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行开方操作").parent().create("td").text("sqrt").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("log").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行log操作").parent().create("td").text("log").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("acos").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行acos操作").parent().create("td").text("acos").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("cos").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行cos操作").parent().create("td").text("cos").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("cosh").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行cosh操作").parent().create("td").text("cosh").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("asin").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行asin操作").parent().create("td").text("asin").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("sin").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行sin操作").parent().create("td").text("sin").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("sinh").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行sinh操作").parent().create("td").text("sinh").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("tan").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行tan操作").parent().create("td").text("tan").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("tanh").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行tanh操作").parent().create("td").text("tanh").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("atan").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行atan操作").parent().create("td").text("atan").parent()
+                    .parent()
+
+                    .create("tr")
+                    .create("td").text("ceil").parent().create("td").text("<none>").parent().create("td").text("对堆顶值执行ceil操作").parent().create("td").text("ceil").parent()
+                    .parent()
+
+                    .parent()
+            ))
+    ));
     a.append(new a.PageDown().name("2.2").append(
         new a.PageDown().name("新增注解").id("anno").append(
             new a.Show().name("Depend").value([
