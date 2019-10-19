@@ -355,7 +355,7 @@ invoke 1'})
                     .parent()
 
                     .create("tr")
-                    .create("td").text("get_context").parent().create("td").text("[context的key值[注意空格]]").parent().create("td").text("从context取值并推到堆顶").parent().create("td").text("ge_context Sys.out.pl").parent()
+                    .create("td").text("get_context").parent().create("td").text("[context的key值[注意空格]]").parent().create("td").text("从context取值并推到堆顶").parent().create("td").text("get_context Sys.out.pl").parent()
                     .parent()
 
                     .create("tr")
@@ -363,7 +363,7 @@ invoke 1'})
                     .parent()
 
                     .create("tr")
-                    .create("td").text("set_var").parent().create("td").text("[变量]").parent().create("td").text("把堆顶的值存入变量把堆栈移前").parent().create("td").text("get_context Sys.out.pl").parent()
+                    .create("td").text("set_var").parent().create("td").text("[变量]").parent().create("td").text("把堆顶的值存入变量把堆栈移前").parent().create("td").text("set_var 0").parent()
                     .parent()
 
                     .create("tr")
